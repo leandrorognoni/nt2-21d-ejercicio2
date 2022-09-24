@@ -16,10 +16,20 @@
 <div class="container-fluid mt-3" id="app">
     <input type="text" class="form-control" v-model="criterioDeBusqueda"
         placeholder="Por favor ingrese nombre/apellido buscado:">
+  
      <br>
-    <input type="text" class="form-control" v-model="criterioDeBusqueda2"
+    <input id="dni" type="text" class="form-control" v-model="criterioDeBusqueda2"
         placeholder="Por favor ingrese DNI buscado:">
+
+ 
     <br>
+
+    <p v-if="mostrarAlerta" class="alert alert-danger">
+         Debe ingresar al menos 3 caracteres 
+    </p>
+    
+
+
     <div class="card-deck m-0">
         <div class="row">
             <div class="col" v-for="persona in personasFiltradas">
@@ -45,6 +55,8 @@
     new Vue({
         el: '#app',
         data: {
+            pepe: 0,
+             mostrarAlerta: false,
             criterioDeBusqueda: '',
             criterioDeBusqueda2: '',
              personas: [
@@ -80,13 +92,22 @@
         computed: {
             personasFiltradas() {
                 return this.personas.filter((persona) => {
-                    let registroCompleto = `${persona.nombre} ${persona.apellido} `
-                    registroCompleto = registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase())
+                    this.mostrarAlerta = false
+                    let registroCompleto = `${persona.nombre} ${persona.apellido} `  
 
+                    let nombreCompleto  = registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase())
+                      
+                    if(this.criterioDeBusqueda.toString().length <= 3 &&  this.criterioDeBusqueda2.toString().length <= 3
+                    &&  (this.criterioDeBusqueda.toString().length > 0 ||  this.criterioDeBusqueda2.toString().length > 0)){
+                        this.mostrarAlerta = true 
+                    }
+ 
                     let registroDNI = `  ${persona.dni} ` 
-                    registroDNI= registroDNI.toLowerCase().includes(this.criterioDeBusqueda2)
+                    let dniCompleto = registroDNI.toLowerCase().includes(this.criterioDeBusqueda2)
+                    
+                    
 
-                    return registroDNI && registroCompleto
+                    return dniCompleto && nombreCompleto
                   
                 });
             }
@@ -95,6 +116,7 @@
             getNombreCompleto(persona) {
                 return `${persona.nombre} ${persona.apellido}`
             }
+           
         }
     });
 </script>
